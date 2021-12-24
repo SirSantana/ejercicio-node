@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "repuesto": "Impulsadores",
-    "marca": "Chevrolet Corsa",
+    "marca": "Chevrolet Corsaaa",
     "nombre": "Miguel",
     "important": true
 }
