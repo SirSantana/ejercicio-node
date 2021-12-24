@@ -1,0 +1,10 @@
+
+POST http://localhost:3001/api/preguntas/
+Content-Type: application/json
+
+{
+    "repuesto": "Impulsadores",
+    "marca": "Chevrolet Corsa",
+    "nombre": "Miguel",
+    "important": true
+}
