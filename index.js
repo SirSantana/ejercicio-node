@@ -24,7 +24,7 @@ let questions = [
 ];
 
 app.get("/", (req, res) => {
-  res.send("<h2>Bienvenidos a colMotors, cotiza en 30 minutos!</h2>");
+  res.send("<h2>Bienvenidos a colMotors, cotiza en 30 minutoooos!</h2>");
 });
 
 app.get("/api/preguntas", (req, res) => {
