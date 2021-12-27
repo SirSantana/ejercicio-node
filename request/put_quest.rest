@@ -1,0 +1,6 @@
+PUT http://localhost:3001/api/pregunta/61c8c8b60a4b70e0b329a676
+Content-Type: application/json
+
+{
+    "important": false
+}

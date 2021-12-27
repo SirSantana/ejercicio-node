@@ -1,79 +1,83 @@
-import express from "express";
-import cors from 'cors'
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
 const app = express();
+
+const Note = require("./models/preguntas");
+const errorhandlers = require("./middleware/errorhandlers");
+const noteFound = require("./middleware/noteFound");
+
 app.use(express.json());
-app.use(cors())
-
-let questions = [
-  {
-    id: 1,
-    nombre: "Miguel",
-    date: "2019-05-30T17:30:31.098Z",
-    important: true,
-    repuesto: "Impulsadores",
-    marca: "Chevrolet Corsa",
-  },
-  {
-    id: 2,
-    nombre: "Miguel",
-    date: "2019-05-30T17:30:31.098Z",
-    important: true,
-    repuesto: "Impulsadores",
-    marca: "Chevrolet Corsa",
-  },
-];
-
-app.get("/", (req, res) => {
-  res.send("<h2>Bienvenidos a colMotors, cotiza en 30 minutoooos!</h2>");
-});
+app.use(cors());
 
 app.get("/api/preguntas", (req, res) => {
-  res.json(questions);
+  Note.find({}).then((questions) => {
+    res.json(questions);
+  });
 });
-app.get("/api/pregunta/:id", (req, res) => {
+
+app.get("/", (req, res,) => {
+  res.json("<h2>Bienvenidos a colMotors</h2>");
+});
+
+app.get("/api/preguntas/:id", (req, res, next) => {
+  Note.findById(req.params.id)
+    .then((quest) => {
+      quest
+        ? res.json(quest)
+        : res.status(404).json({ err: "No se encontro" }).end();
+    })
+    .catch((error) => next(error));
+});
+app.put("/api/pregunta/:id", (req, res, next) => {
   const { id } = req.params;
-  const pregunta = questions.find((quest) => quest.id === Number(id));
+  const body = req.body;
 
-  if (pregunta) {
-    res.json(pregunta);
-    
-  } else {
-    res.status(404).end();
-  }
-});
-app.delete("/api/pregunta/:id", (req, res) => {
-  const { id } = req.params;
-  const pregunta = questions.filter((quest) => quest.id !== Number(id));
-
-  res.json(pregunta);
-  res.status(204).end();
-});
-
-
-const generateId = () => {
-    const maxId = questions.length > 0 ? Math.max(...questions.map((n) => n.id)) : 0;
-    return maxId + 1;
+  const note = {
+    important: body.important,
   };
+
+  Note.findByIdAndUpdate(id, note, { new: true })
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => next(error));
+});
+
+app.delete("/api/pregunta/:id", (req, res, next) => {
+  const { id } = req.params;
+  Note.findByIdAndRemove(id)
+    .then(() => {})
+    .catch((error) => next(error));
+
+  res.status(404).end();
+});
 
 app.post("/api/preguntas", (req, res) => {
   const body = req.body;
-  
-    const quest = {
-    id: generateId(),
+
+  if (body === undefined) {
+    console.log(body);
+    return res.status(400).json({ error: "Missing Content" });
+  }
+  const quest = new Note({
     nombre: body.nombre,
     date: new Date(),
     important: body.important || false,
     repuesto: body.repuesto,
     marca: body.marca,
-    }
+  });
 
-  questions = questions.concat(quest)
-  res.json(quest)
-  
-
+  quest.save().then((savedNote) => {
+    res.json(savedNote);
+  });
 });
 
-const PORT = process.env.PORT || 3001;
+app.use(noteFound);
+
+app.use(errorhandlers);
+
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`Server on port ${PORT}`);

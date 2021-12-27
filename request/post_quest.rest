@@ -3,8 +3,8 @@ POST http://localhost:3001/api/preguntas/
 Content-Type: application/json
 
 {
-    "repuesto": "Impulsadores",
-    "marca": "Chevrolet Corsaaa",
-    "nombre": "Miguel",
+    "repuesto": "Amortiguadores Delanteros",
+    "marca": " Ford Fiesta 1.8 2010",
+    "nombre": "Harrison Otalora",
     "important": true
 }
